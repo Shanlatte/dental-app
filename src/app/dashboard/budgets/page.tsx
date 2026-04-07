@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Trash2, Printer, Save, Calculator, Loader2, Edit2 } from "lucide-react"
@@ -34,6 +34,18 @@ import { createClient } from "@/utils/supabase/client"
 import moment from "moment"
 
 export default function BudgetsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <BudgetsContent />
+    </Suspense>
+  )
+}
+
+function BudgetsContent() {
   const supabase = createClient()
   const searchParams = useSearchParams()
   const router = useRouter()
