@@ -151,7 +151,7 @@ export default function PrescriptionsPage() {
         </div>
 
         {/* Prescription Viewer (Right) */}
-        <div className="flex-1 max-w-[8.5in] print:mx-auto">
+        <div className="flex-1 max-w-[8.5in] print:mx-auto print-full-width">
           <Card className="shadow-lg border-muted/50 bg-white min-h-[11in] flex flex-col overflow-hidden italic">
             <CardHeader className="border-b bg-muted/5 p-12 text-center space-y-3">
               <div className="flex flex-col items-center gap-2">
@@ -219,23 +219,6 @@ export default function PrescriptionsPage() {
         </div>
       </div>
 
-      <style jsx global>{`
-        @media print {
-          header { display: none !important; }
-          .print\\:hidden { display: none !important; }
-          nav { display: none !important; }
-          main { padding: 0 !important; max-width: 100% !important; border: none !important; margin: 0 !important; }
-          .lg\\:w-\\[350px\\] { display: none !important; }
-          .lg\\:flex-row { flex-direction: column !important; }
-          .shadow-lg { box-shadow: none !important; border: none !important; }
-          .max-w-4xl { max-width: 100% !important; margin: 0 !important; }
-          .p-6, .p-10, .p-12 { padding: 40px !important; }
-          .p-8 { padding: 30px !important; }
-          .text-primary { color: #2563eb !important; }
-          .text-foreground { color: #000 !important; }
-          .text-muted-foreground { color: #666 !important; }
-        }
-      `}</style>
     </div>
   )
 }

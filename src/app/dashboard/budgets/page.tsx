@@ -338,7 +338,7 @@ function BudgetsContent() {
               </Card>
             </div>
 
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 print-full-width">
               <Card className="shadow-2xl border-border/50 min-h-[850px] flex flex-col bg-white print:shadow-none print:border-none ring-1 ring-primary/5">
                 <CardContent className="p-8 sm:p-12 space-y-8 flex-1 font-sans">
                   <div className="flex justify-between items-start border-b-2 border-primary/10 pb-8">
