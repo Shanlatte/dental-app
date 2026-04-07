@@ -75,7 +75,48 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-8 scroll-smooth">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <Card className="shadow-sm border border-border/50">
+          <CardHeader>
+            <CardTitle>Próximas Citas</CardTitle>
+            <CardDescription>Citas agendadas a partir de hoy.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentApps.length > 0 ? (
+                recentApps.map((app) => (
+                  <div key={app.id} className="flex items-center justify-between p-4 rounded-lg bg-muted/20 border border-transparent hover:border-primary/20 transition-all cursor-pointer">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold uppercase">
+                        {(app.patients?.first_name?.[0] || "") + (app.patients?.last_name?.[0] || "")}
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">{app.patients?.first_name} {app.patients?.last_name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {app.notes || "Consulta General"} - {moment(app.start_time).format('DD MMM, hh:mm A')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className={`px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize ${
+                        app.status === 'confirmed' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 
+                        app.status === 'cancelled' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 
+                        'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                      }`}>
+                        {app.status === 'waiting' ? 'En Espera' : app.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4 italic">No hay citas próximas agendadas.</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="hover:shadow-lg transition-shadow duration-300 shadow-sm border border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Pacientes Totales</CardTitle>
@@ -104,16 +145,6 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">RD$ {stats.earnings.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground mt-1 italic">Basado en presupuestos</p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-lg transition-shadow duration-300 shadow-sm border border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Servicios</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.procedures}</div>
-            <p className="text-xs text-muted-foreground mt-1 italic">Catálogo de procedimientos</p>
           </CardContent>
         </Card>
       </div>
@@ -158,47 +189,6 @@ export default function DashboardPage() {
                 <Bar dataKey="pacientes" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div>
-        <Card className="shadow-sm border border-border/50">
-          <CardHeader>
-            <CardTitle>Próximas Citas</CardTitle>
-            <CardDescription>Citas agendadas a partir de hoy.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentApps.length > 0 ? (
-                recentApps.map((app) => (
-                  <div key={app.id} className="flex items-center justify-between p-4 rounded-lg bg-muted/20 border border-transparent hover:border-primary/20 transition-all cursor-pointer">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold uppercase">
-                        {(app.patients?.first_name?.[0] || "") + (app.patients?.last_name?.[0] || "")}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">{app.patients?.first_name} {app.patients?.last_name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {app.notes || "Consulta General"} - {moment(app.start_time).format('DD MMM, hh:mm A')}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className={`px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize ${
-                        app.status === 'confirmed' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 
-                        app.status === 'cancelled' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 
-                        'bg-amber-500/10 text-amber-500 border-amber-500/20'
-                      }`}>
-                        {app.status === 'waiting' ? 'En Espera' : app.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4 italic">No hay citas próximas agendadas.</p>
-              )}
-            </div>
           </CardContent>
         </Card>
       </div>
