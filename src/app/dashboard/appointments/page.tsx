@@ -174,9 +174,25 @@ export default function AppointmentsPage() {
   return (
     <div className="space-y-6 flex flex-col md:h-[calc(100vh-140px)]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Agenda de Citas</h2>
-          <p className="text-sm sm:text-base text-muted-foreground">Gestiona tus pacientes y horarios desde el calendario central.</p>
+        <div className="space-y-1">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter text-foreground">Agenda de Citas</h2>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5 flex-nowrap">
+                <div className="h-2.5 w-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+                <span className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground/80">En Espera</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-nowrap">
+                <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                <span className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground/80">Confirmada</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-nowrap">
+                <div className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                <span className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground/80">Cancelada</span>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium uppercase tracking-widest opacity-70">Gestiona tus pacientes y horarios.</p>
         </div>
         <div className="flex gap-2">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -383,11 +399,10 @@ export default function AppointmentsPage() {
             </CardContent>
           </Card>
         </div>
-
         {/* Sidebar Items */}
-        <div className="order-2 lg:order-1 lg:col-span-1 space-y-6">
-          <Card className="shadow-sm border-border/50">
-            <CardHeader className="py-4">
+        <div className="order-2 lg:order-1 lg:col-span-1 flex flex-col min-h-0 h-full">
+          <Card className="shadow-sm border-border/50 flex flex-col h-full overflow-hidden">
+            <CardHeader className="py-4 shrink-0 border-b">
               <CardTitle className="text-base font-semibold">Citas de Hoy</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 p-4">
@@ -405,26 +420,6 @@ export default function AppointmentsPage() {
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-4 italic">No hay citas para hoy</p>
               )}
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm border-border/50">
-            <CardHeader className="py-4">
-              <CardTitle className="text-base font-semibold">Leyenda</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 p-4">
-              <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-amber-500" />
-                <span className="text-xs text-muted-foreground">En Espera</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-emerald-500" />
-                <span className="text-xs text-muted-foreground">Confirmada</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-red-500" />
-                <span className="text-xs text-muted-foreground">Cancelada</span>
-              </div>
             </CardContent>
           </Card>
         </div>
