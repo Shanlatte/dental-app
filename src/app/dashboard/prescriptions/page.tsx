@@ -153,8 +153,8 @@ export default function PrescriptionsPage() {
 
         {/* Prescription Viewer (Right) */}
         <div className="flex-1 max-w-[8.5in] print:mx-auto print-full-width">
-          <Card className="shadow-lg border-muted/50 bg-white min-h-[11in] flex flex-col overflow-hidden italic">
-            <CardHeader className="border-b bg-muted/5 p-12 text-center space-y-3">
+          <Card className="shadow-lg border-muted/50 bg-white min-h-[9in] print:min-h-0 flex flex-col overflow-hidden italic print:shadow-none print:border-none">
+            <CardHeader className="border-b bg-muted/5 p-8 md:p-12 print:p-8 text-center space-y-3">
               <div className="flex flex-col items-center gap-2">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-2">
                   <ClipboardList className="h-6 w-6" />
@@ -174,8 +174,8 @@ export default function PrescriptionsPage() {
               </div>
             </CardHeader>
 
-            <CardContent className="flex-1 p-12 relative font-sans">
-              <div className="flex justify-between items-end mb-12 border-b border-border/30 pb-4">
+            <CardContent className="flex-1 p-8 md:p-12 print:p-8 relative font-sans">
+              <div className="flex justify-between items-end mb-8 md:mb-12 border-b border-border/30 pb-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] font-bold uppercase tracking-widest not-italic">
                     <User className="h-3 w-3" /> Paciente
@@ -197,23 +197,23 @@ export default function PrescriptionsPage() {
                 <Pill className="h-48 w-48 text-primary" />
               </div>
 
-              <div className="min-h-[400px] py-10 relative z-10 font-sans italic">
+              <div className="min-h-[300px] py-6 md:py-10 relative z-10 font-sans italic">
                 <div className="text-[12px] font-bold uppercase tracking-[0.2em] text-primary/60 mb-6 flex items-center gap-2 not-italic underline">
                   <ClipboardCheck className="h-4 w-4" /> Rp. (Recíbase)
                 </div>
-                <div className="whitespace-pre-wrap leading-[2.5] text-lg text-foreground font-medium pl-6 italic">
+                <div className="whitespace-pre-wrap leading-[2.2] text-lg text-foreground font-medium pl-6 italic">
                   {meds || "Indique los medicamentos en el panel lateral..."}
                 </div>
               </div>
 
-              <div className="mt-20 pt-10 flex justify-end">
+              <div className="mt-12 md:mt-20 pt-6 md:pt-10 flex justify-end">
                 <div className="w-[300px] border-t border-muted-foreground/30 flex flex-col items-center pt-2 italic text-muted-foreground">
                   <span className="text-xs uppercase font-bold text-muted-foreground/60 not-italic tracking-widest mb-1 italic">Firma y Sello</span>
                 </div>
               </div>
             </CardContent>
 
-            <CardFooter className="bg-muted/5 border-t p-8 text-center text-[10px] text-muted-foreground italic font-medium uppercase tracking-widest">
+            <CardFooter className="bg-muted/5 border-t p-6 md:p-8 text-center text-[10px] text-muted-foreground italic font-medium uppercase tracking-widest">
               <span>"Tu salud bucal es nuestra prioridad"</span>
             </CardFooter>
           </Card>

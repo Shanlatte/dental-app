@@ -340,8 +340,9 @@ function BudgetsContent() {
             </div>
 
             <div className="lg:col-span-2 print-full-width">
-              <Card className="shadow-2xl border-border/50 min-h-[850px] flex flex-col bg-white print:shadow-none print:border-none ring-1 ring-primary/5">
-                <CardContent className="p-8 sm:p-12 space-y-8 flex-1 font-sans">
+              <Card className="shadow-2xl border-border/50 min-h-[8.5in] print:min-h-[10in] flex flex-col bg-white print:shadow-none print:border-none ring-1 ring-primary/5">
+                <CardContent className="p-8 md:p-14 print:p-12 space-y-10 flex-1 flex flex-col font-sans">
+                  {/* Header */}
                   <div className="flex justify-between items-start border-b-2 border-primary/10 pb-8">
                     <div className="space-y-1">
                       <h1 className="text-3xl font-black text-primary tracking-tighter uppercase">{profile?.clinic_name || 'CLÍNICA DENTAL'}</h1>
@@ -355,10 +356,11 @@ function BudgetsContent() {
                     </div>
                   </div>
 
-                  <div className="bg-muted/10 p-6 rounded-xl border border-muted/20 text-sm ring-1 ring-inset ring-primary/5">
+                  {/* Patient Info */}
+                  <div className="bg-muted/10 p-6 rounded-2xl border border-muted/20 text-sm ring-1 ring-inset ring-primary/5 print:bg-transparent">
                     <div className="grid grid-cols-2 gap-8">
                       <div>
-                        <span className="text-muted-foreground uppercase text-[10px] font-black block mb-2 tracking-[0.2em] opacity-60">Datos del Paciente</span>
+                        <span className="text-muted-foreground uppercase text-[10px] font-black block mb-2 tracking-[0.2em] opacity-60">Paciente</span>
                         <span className="font-bold text-lg text-primary uppercase leading-none">
                           {selectedPatient ? patients.find(p => p.id === selectedPatient)?.first_name + ' ' + patients.find(p => p.id === selectedPatient)?.last_name : '---'}
                         </span>
@@ -370,16 +372,17 @@ function BudgetsContent() {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
+                  {/* Treatments Table */}
+                  <div className="space-y-6 flex-1">
                     <div className="grid grid-cols-12 border-b-2 border-primary/5 pb-3 text-[10px] font-black uppercase text-primary/40 tracking-[0.4em]">
                       <div className="col-span-8">Descripción del Tratamiento</div>
                       <div className="col-span-4 text-right">Monto Unitario (RD$)</div>
                     </div>
                     
-                    <div className="space-y-4 min-h-[350px] pt-4">
+                    <div className="space-y-6 min-h-[250px] pt-4">
                       {items.length > 0 ? (
                         items.map((item) => (
-                          <div key={item.tempId} className="grid grid-cols-12 items-center text-[15px] group border-b border-muted/10 pb-4 last:border-0">
+                          <div key={item.tempId} className="grid grid-cols-12 items-center text-[15px] group border-b border-muted/10 pb-6 last:border-0 print:pb-4">
                             <div className="col-span-8 font-bold text-foreground/80 italic tracking-tight">
                               {item.name}
                             </div>
@@ -416,41 +419,36 @@ function BudgetsContent() {
                     </div>
                   </div>
 
-                  <div className="border-t-4 border-double border-primary/10 pt-8 space-y-3 bg-primary/[0.02] -mx-12 px-12 pb-8 rounded-b-3xl">
-                    <div className="flex justify-end gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground/60">
-                      <span>Subtotal de Servicios:</span>
-                      <span className="font-mono w-40 text-right not-italic text-foreground">RD$ {subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  {/* Totals Section */}
+                  <div className="border-t-4 border-double border-primary/10 pt-10 space-y-4 bg-primary/[0.02] -mx-14 px-14 pb-10 rounded-b-3xl print:mx-0 print:px-6 print:bg-transparent mt-auto">
+                    <div className="flex justify-end gap-12 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+                      <span>Subtotal servicios:</span>
+                      <span className="font-mono w-48 text-right not-italic text-foreground">RD$ {subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                     </div>
                     {discount > 0 && (
-                      <div className="flex justify-end gap-12 text-sm text-emerald-600 font-bold uppercase tracking-widest">
-                        <span>Descuento Aplicado:</span>
-                        <span className="font-mono w-40 text-right not-italic">- RD$ {discount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                      <div className="flex justify-end gap-12 text-xs text-emerald-600 font-bold uppercase tracking-[0.2em]">
+                        <span>Descuento aplicado:</span>
+                        <span className="font-mono w-48 text-right not-italic">- RD$ {discount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                       </div>
                     )}
-                    <div className="flex justify-end pt-4">
-                      <div className="bg-primary text-primary-foreground px-8 py-5 rounded-2xl flex items-center gap-12 shadow-xl shadow-primary/20">
-                        <span className="text-[10px] uppercase font-black tracking-[0.4em] opacity-70">Monto Total Presupuestado</span>
-                        <span className="text-3xl font-black font-mono tracking-tighter">RD$ {total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    <div className="flex justify-end pt-6">
+                      <div className="bg-primary text-primary-foreground px-8 py-4 rounded-2xl flex items-center gap-12 shadow-2xl shadow-primary/20 print:shadow-none print:py-3 print:bg-muted/10 print:text-primary print:border print:border-primary/20">
+                        <span className="text-[9px] uppercase font-black tracking-[0.4em] opacity-70 leading-tight">Total<br />presupuesto</span>
+                        <span className="text-2xl font-black font-mono tracking-tighter">RD$ {total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-20 text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em] space-y-6 italic">
-                    <div className="grid grid-cols-2 gap-12">
-                      <div className="space-y-2 opacity-50 not-italic">
-                        <p className="text-primary/60 border-b border-primary/10 pb-2 mb-4">Condiciones Comerciales:</p>
-                        <p>• Este presupuesto tiene una validez de 30 días.</p>
-                        <p>• Los montos pueden variar según hallazgos clínicos adicionales.</p>
-                        <p>• No incluye honorarios de especialistas externos.</p>
-                      </div>
-                      <div className="flex flex-col justify-end items-center">
-                        <h3 className="text-2xl font-black tracking-tight uppercase text-foreground not-italic">
-                          {profile ? `${getDoctorTitle(profile.gender)} ${profile.first_name} ${profile.last_name}` : 'DRA. PROFESIONAL'}
-                        </h3>
-                        <p className="text-sm font-bold text-primary tracking-widest uppercase not-italic italic">Especialista Dental</p>
-                      </div>
+                  {/* Signature Section */}
+                  <div className="pt-20 text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em] italic">
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <div className="w-64 border-b border-muted-foreground/20 mb-2"></div>
+                      <h3 className="text-2xl font-black tracking-tight uppercase text-foreground not-italic">
+                        {profile ? `${getDoctorTitle(profile.gender)} ${profile.first_name} ${profile.last_name}` : 'DRA. PROFESIONAL'}
+                      </h3>
+                      <p className="text-sm font-bold text-primary tracking-widest uppercase not-italic italic">Especialista Dental</p>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 text-xs font-medium text-muted-foreground pt-4 border-t border-border/40 border-dashed italic">
+                    <div className="grid grid-cols-2 gap-4 text-[10px] font-bold text-muted-foreground/50 pt-10 border-t border-border/40 border-dashed italic mt-12">
                       <div className="text-left space-y-1">
                         <p>{profile?.clinic_name || 'Clínica Dental Profesional'}</p>
                       </div>
