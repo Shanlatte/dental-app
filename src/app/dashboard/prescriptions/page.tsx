@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { createClient } from "@/utils/supabase/client"
+import { getDoctorTitle } from "@/utils/formatters"
 
 export default function PrescriptionsPage() {
   const supabase = createClient()
@@ -159,7 +160,7 @@ export default function PrescriptionsPage() {
                   <ClipboardList className="h-6 w-6" />
                 </div>
                 <h3 className="text-2xl font-black tracking-tight uppercase text-foreground not-italic">
-                  {profile ? `DR(A). ${profile.first_name} ${profile.last_name}` : 'DRA. PROFESIONAL'}
+                  {profile ? `${getDoctorTitle(profile.gender)} ${profile.first_name} ${profile.last_name}` : 'DRA. PROFESIONAL'}
                 </h3>
                 <p className="text-sm font-bold text-primary tracking-widest uppercase not-italic italic">Especialista Dental</p>
               </div>

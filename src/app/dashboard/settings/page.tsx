@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import { User, Lock, Building, Phone, MapPin, Loader2 } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createClient } from "@/utils/supabase/client"
 
 export default function SettingsPage() {
@@ -20,6 +21,7 @@ export default function SettingsPage() {
     clinic_name: "",
     clinic_address: "",
     clinic_phone: "",
+    gender: "none",
     email: ""
   })
 
@@ -70,6 +72,7 @@ export default function SettingsPage() {
         clinic_name: profile.clinic_name,
         clinic_address: profile.clinic_address,
         clinic_phone: profile.clinic_phone,
+        gender: profile.gender,
         updated_at: new Date().toISOString()
       })
 
@@ -153,9 +156,27 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo Electrónico (Solo Lectura)</Label>
-                <Input id="email" type="email" value={profile.email} disabled className="bg-muted/50" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Sexo / Género</Label>
+                  <Select 
+                    value={profile.gender} 
+                    onValueChange={(val: string | null) => setProfile({...profile, gender: val ?? "none"})}
+                  >
+                    <SelectTrigger id="gender">
+                      <SelectValue placeholder="Seleccione sexo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Sin especificar</SelectItem>
+                      <SelectItem value="masculino">Masculino (Dr.)</SelectItem>
+                      <SelectItem value="femenino">Femenino (Dra.)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Correo Electrónico (Solo Lectura)</Label>
+                  <Input id="email" type="email" value={profile.email} disabled className="bg-muted/50" />
+                </div>
               </div>
             </CardContent>
             <CardFooter className="bg-muted/10 border-t pt-4">

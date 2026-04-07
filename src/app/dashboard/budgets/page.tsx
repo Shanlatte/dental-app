@@ -32,6 +32,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { createClient } from "@/utils/supabase/client"
 import moment from "moment"
+import { getDoctorTitle } from "@/utils/formatters"
 
 export default function BudgetsPage() {
   return (
@@ -345,7 +346,7 @@ function BudgetsContent() {
                     <div className="space-y-1">
                       <h1 className="text-3xl font-black text-primary tracking-tighter uppercase">{profile?.clinic_name || 'CLÍNICA DENTAL'}</h1>
                       <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em] italic">
-                        {profile ? `DR(A). ${profile.first_name} ${profile.last_name}` : 'Servicios Odontológicos Profesionales'}
+                        {profile ? `${getDoctorTitle(profile.gender)} ${profile.first_name} ${profile.last_name}` : 'Servicios Odontológicos Profesionales'}
                       </p>
                     </div>
                     <div className="text-right space-y-1 text-[10px] text-muted-foreground font-bold uppercase tracking-widest italic opacity-60">
@@ -444,7 +445,7 @@ function BudgetsContent() {
                       </div>
                       <div className="flex flex-col justify-end items-center">
                         <h3 className="text-2xl font-black tracking-tight uppercase text-foreground not-italic">
-                          {profile ? `DR(A). ${profile.first_name} ${profile.last_name}` : 'DRA. PROFESIONAL'}
+                          {profile ? `${getDoctorTitle(profile.gender)} ${profile.first_name} ${profile.last_name}` : 'DRA. PROFESIONAL'}
                         </h3>
                         <p className="text-sm font-bold text-primary tracking-widest uppercase not-italic italic">Especialista Dental</p>
                       </div>

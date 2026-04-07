@@ -42,6 +42,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/client"
+import { getDoctorTitle } from "@/utils/formatters"
 
 const items = [
   {
@@ -110,12 +111,15 @@ export function AppSidebar() {
         setUserEmail(user.email ?? "Doctor(a)")
         const { data: profile } = await supabase
           .from('profiles')
-          .select('clinic_name')
+          .select('clinic_name, first_name, last_name, gender')
           .eq('id', user.id)
           .single()
         
-        if (profile?.clinic_name) {
-          setClinicName(profile.clinic_name)
+        if (profile) {
+          if (profile.clinic_name) setClinicName(profile.clinic_name)
+          if (profile.first_name) {
+            setUserEmail(`${getDoctorTitle(profile.gender)} ${profile.first_name}`)
+          }
         }
       }
     }
@@ -179,7 +183,7 @@ export function AppSidebar() {
                   <AvatarFallback className="rounded-lg">{userEmail?.[0].toUpperCase() || "D"}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                  <span className="truncate font-semibold">{userEmail?.split('@')[0] || "Doctor(a)"}</span>
+                  <span className="truncate font-semibold">{userEmail || "Doctor(a)"}</span>
                   <span className="truncate text-xs">Clínica Dental</span>
                 </div>
               </DropdownMenuTrigger>

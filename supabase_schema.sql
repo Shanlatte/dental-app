@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     clinic_name TEXT,
     clinic_address TEXT,
     clinic_phone TEXT,
+    gender TEXT,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
