@@ -137,6 +137,25 @@ export default function AppointmentsPage() {
       toast.error("Error al agendar cita: " + error.message)
     } else {
       toast.success("Cita agendada correctamente")
+      
+      // DISPARAR WHATSAPP DESDE EL CÓDIGO
+      const patient = patients.find(p => p.id === patientId)
+      if (patient && patient.phone) {
+        fetch('/api/notifications/whatsapp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-webhook-secret': process.env.NEXT_PUBLIC_WEBHOOK_SECRET || '' // Secreto para seguridad
+          },
+          body: JSON.stringify({
+            phone: patient.phone,
+            patientName: `${patient.first_name} ${patient.last_name}`,
+            date: moment(start).format('DD/MM/YYYY'),
+            time: moment(start).format('hh:mm A')
+          })
+        }).catch(err => console.error("Error al notificar:", err))
+      }
+
       setIsDialogOpen(false)
       fetchData()
     }
