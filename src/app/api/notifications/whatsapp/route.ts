@@ -19,13 +19,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
-    const { phone, patientName, date, time } = await req.json()
+    const { phone, patientName, procedureName, date, time } = await req.json()
 
     if (!phone || !patientName) {
       return NextResponse.json({ error: 'Payload inválido: faltan datos del paciente' }, { status: 400 })
     }
 
-    console.log(`Enviando notificación a ${patientName} (${phone})`)
+    console.log(`Enviando notificación a ${patientName} para ${procedureName} (${phone})`)
 
     // 2. Enviar WhatsApp vía Twilio
     const formattedPhone = phone.startsWith('whatsapp:') ? phone : `whatsapp:${phone}`
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     const message = await client.messages.create({
       from: fromNumber,
       to: formattedPhone,
-      body: `Hola ${patientName}! 👋\n\nTienes una cita agendada para el día ${date} a las ${time}.\n\nPor favor, responde con el número de tu opción:\n1️⃣ Confirmar asistencia\n2️⃣ Cancelar cita`
+      body: `*Confirmación de Cita* 🦷\n\nHola *${patientName}*! 👋\n\nTienes una cita programada:\n\n🔹 *Servicio:* ${procedureName}\n📅 *Fecha:* ${date}\n⏰ *Hora:* ${time}\n\nPor favor, responde con el número de tu opción:\n\n1️⃣ *Confirmar asistencia*\n2️⃣ *Cancelar cita*`
     })
 
     return NextResponse.json({ success: true, messageSid: message.sid })

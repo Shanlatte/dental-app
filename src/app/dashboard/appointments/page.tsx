@@ -19,12 +19,12 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
@@ -73,7 +73,7 @@ export default function AppointmentsPage() {
     setLoading(true)
     const [appRes, patRes, procRes] = await Promise.all([
       supabase.from('appointments').select('*, patients(first_name, last_name)').order('start_time', { ascending: true }),
-      supabase.from('patients').select('id, first_name, last_name').order('first_name', { ascending: true }),
+      supabase.from('patients').select('id, first_name, last_name, phone').order('first_name', { ascending: true }),
       supabase.from('procedures').select('id, name').order('name', { ascending: true })
     ])
 
@@ -137,23 +137,51 @@ export default function AppointmentsPage() {
       toast.error("Error al agendar cita: " + error.message)
     } else {
       toast.success("Cita agendada correctamente")
-      
       // DISPARAR WHATSAPP DESDE EL CÓDIGO
-      const patient = patients.find(p => p.id === patientId)
-      if (patient && patient.phone) {
-        fetch('/api/notifications/whatsapp', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-webhook-secret': process.env.NEXT_PUBLIC_WEBHOOK_SECRET || '' // Secreto para seguridad
-          },
-          body: JSON.stringify({
+      try {
+        console.log("Iniciando proceso de notificación para paciente ID:", patientId)
+
+        const patient = patients.find(p => p.id === patientId)
+        
+        if (!patient) {
+          console.error("❌ Error: No se encontró el objeto del paciente en la lista local.")
+        } else if (!patient.phone) {
+          console.error("❌ Error: El paciente", patient.first_name, "no tiene un número de teléfono registrado.")
+        } else {
+          console.log("✅ Paciente encontrado:", patient.first_name, "| Teléfono:", patient.phone)
+          
+          const procedure = procedures.find(p => p.id === procedureId)
+          
+          const payload = {
             phone: patient.phone,
             patientName: `${patient.first_name} ${patient.last_name}`,
+            procedureName: procedure?.name || "Consulta General",
             date: moment(start).format('DD/MM/YYYY'),
             time: moment(start).format('hh:mm A')
+          }
+
+          console.log("Enviando payload a la API:", payload)
+
+          fetch('/api/notifications/whatsapp', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-webhook-secret': process.env.NEXT_PUBLIC_WEBHOOK_SECRET || ''
+            },
+            body: JSON.stringify(payload)
           })
-        }).catch(err => console.error("Error al notificar:", err))
+          .then(async res => {
+            const data = await res.json()
+            if (res.ok) {
+              console.log("🚀 Notificación enviada con éxito!", data)
+            } else {
+              console.error("❌ Error en la respuesta de la API (Status:", res.status, "):", data)
+            }
+          })
+          .catch(err => console.error("❌ Error de red al intentar llamar a la API:", err))
+        }
+      } catch (error) {
+        console.error("❌ Error inesperado en el bloque de notificación:", error)
       }
 
       setIsDialogOpen(false)
@@ -161,7 +189,7 @@ export default function AppointmentsPage() {
     }
     setIsSubmitting(false)
   }
-  
+
   const handleUpdateStatus = async (status: string) => {
     if (!selectedEvent) return
     setIsSubmitting(true)
@@ -186,7 +214,7 @@ export default function AppointmentsPage() {
     setIsEditOpen(true)
   }
 
-  const todayApps = appointments.filter(app => 
+  const todayApps = appointments.filter(app =>
     moment(app.start).isSame(moment(), 'day')
   )
 
@@ -307,7 +335,7 @@ export default function AppointmentsPage() {
                 <div className="space-y-2">
                   <Label>Actualizar Estado</Label>
                   <div className="flex flex-col gap-2">
-                    <Button 
+                    <Button
                       variant={selectedEvent?.status === 'waiting' ? 'default' : 'outline'}
                       onClick={() => handleUpdateStatus('waiting')}
                       disabled={isSubmitting}
@@ -316,7 +344,7 @@ export default function AppointmentsPage() {
                       <div className="h-2 w-2 rounded-full bg-amber-500 mr-2" />
                       En Espera
                     </Button>
-                    <Button 
+                    <Button
                       variant={selectedEvent?.status === 'confirmed' ? 'default' : 'outline'}
                       onClick={() => handleUpdateStatus('confirmed')}
                       disabled={isSubmitting}
@@ -325,7 +353,7 @@ export default function AppointmentsPage() {
                       <div className="h-2 w-2 rounded-full bg-emerald-500 mr-2" />
                       Confirmada
                     </Button>
-                    <Button 
+                    <Button
                       variant={selectedEvent?.status === 'cancelled' ? 'default' : 'outline'}
                       onClick={() => handleUpdateStatus('cancelled')}
                       disabled={isSubmitting}
@@ -383,7 +411,7 @@ export default function AppointmentsPage() {
                 .rbc-event:hover { filter: brightness(1.1); transform: scale(1.02); }
                 .rbc-show-more { color: hsl(var(--primary)); font-weight: 600; font-size: 0.75rem; }
               `}</style>
-              
+
               {loading ? (
                 <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50">
                   <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -427,10 +455,9 @@ export default function AppointmentsPage() {
             <CardContent className="space-y-3 p-4">
               {todayApps.length > 0 ? (
                 todayApps.map(app => (
-                  <div key={app.id} className={`p-3 bg-muted/20 border-l-4 rounded-md ${
-                    app.status === 'confirmed' ? 'border-emerald-500' : 
-                    app.status === 'cancelled' ? 'border-red-500' : 'border-amber-500'
-                  }`}>
+                  <div key={app.id} className={`p-3 bg-muted/20 border-l-4 rounded-md ${app.status === 'confirmed' ? 'border-emerald-500' :
+                      app.status === 'cancelled' ? 'border-red-500' : 'border-amber-500'
+                    }`}>
                     <p className="text-xs text-muted-foreground">{moment(app.start).format('hh:mm A')}</p>
                     <p className="font-medium text-sm">{app.patients?.first_name} {app.patients?.last_name}</p>
                     <p className="text-xs italic text-muted-foreground mt-1">{app.notes || "Cita General"}</p>
