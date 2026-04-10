@@ -164,7 +164,11 @@ export default function SettingsPage() {
                     onValueChange={(val: string | null) => setProfile({...profile, gender: val ?? "none"})}
                   >
                     <SelectTrigger id="gender">
-                      <SelectValue placeholder="Seleccione sexo" />
+                      <SelectValue>
+                        {profile.gender === "masculino" ? "Masculino (Dr.)" : 
+                         profile.gender === "femenino" ? "Femenino (Dra.)" : 
+                         profile.gender === "none" ? "Sin especificar" : "Seleccione sexo"}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Sin especificar</SelectItem>

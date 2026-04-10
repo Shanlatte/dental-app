@@ -238,7 +238,11 @@ export default function PatientsPage() {
                       onValueChange={(val: string | null) => setFormData({...formData, gender: val ?? "masculino"})}
                     >
                       <SelectTrigger id="gender">
-                        <SelectValue placeholder="Seleccionar" />
+                        <SelectValue>
+                          {formData.gender === "masculino" ? "Masculino" : 
+                           formData.gender === "femenino" ? "Femenino" : 
+                           formData.gender === "otro" ? "Otro" : "Seleccionar"}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="masculino">Masculino</SelectItem>

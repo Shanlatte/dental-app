@@ -7,7 +7,7 @@ import 'moment/locale/es'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, ChevronLeft, ChevronRight, Filter, Loader2 } from "lucide-react"
+import { Plus, ChevronLeft, ChevronRight, Filter, Loader2, Trash2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -68,6 +68,11 @@ export default function AppointmentsPage() {
   const [date, setDate] = useState(new Date())
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
+  
+  // States for new appointment form selects
+  const [selectedPatientId, setSelectedPatientId] = useState<string>("")
+  const [selectedProcedureId, setSelectedProcedureId] = useState<string>("")
+  const [selectedStatus, setSelectedStatus] = useState<string>("waiting")
 
   const fetchData = async () => {
     setLoading(true)
@@ -185,6 +190,10 @@ export default function AppointmentsPage() {
       }
 
       setIsDialogOpen(false)
+      // Reset form states
+      setSelectedPatientId("")
+      setSelectedProcedureId("")
+      setSelectedStatus("waiting")
       fetchData()
     }
     setIsSubmitting(false)
@@ -203,6 +212,26 @@ export default function AppointmentsPage() {
       toast.error("Error al actualizar estado: " + error.message)
     } else {
       toast.success("Estado actualizado")
+      setIsEditOpen(false)
+      fetchData()
+    }
+    setIsSubmitting(false)
+  }
+
+  const handleDeleteAppointment = async () => {
+    if (!selectedEvent) return
+    if (!confirm("¿Está seguro que desea eliminar esta cita permanentemente?")) return
+    
+    setIsSubmitting(true)
+    const { error } = await supabase
+      .from('appointments')
+      .delete()
+      .eq('id', selectedEvent.id)
+
+    if (error) {
+      toast.error("Error al eliminar cita: " + error.message)
+    } else {
+      toast.success("Cita eliminada correctamente")
       setIsEditOpen(false)
       fetchData()
     }
@@ -256,9 +285,19 @@ export default function AppointmentsPage() {
                 <div className="grid gap-6 py-4">
                   <div className="space-y-2">
                     <Label htmlFor="patientId">Paciente</Label>
-                    <Select name="patientId" required>
+                    <Select 
+                      name="patientId" 
+                      required 
+                      value={selectedPatientId} 
+                      onValueChange={(val: string | null) => setSelectedPatientId(val ?? "")}
+                    >
                       <SelectTrigger id="patientId">
-                        <SelectValue placeholder="Seleccionar Paciente" />
+                        <SelectValue>
+                          {selectedPatientId 
+                            ? (patients.find(p => p.id === selectedPatientId)?.first_name + ' ' + patients.find(p => p.id === selectedPatientId)?.last_name)
+                            : "Seleccionar Paciente"
+                          }
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {patients.map(p => (
@@ -269,9 +308,19 @@ export default function AppointmentsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="procedureId">Procedimiento</Label>
-                    <Select name="procedureId" required>
+                    <Select 
+                      name="procedureId" 
+                      required 
+                      value={selectedProcedureId}
+                      onValueChange={(val: string | null) => setSelectedProcedureId(val ?? "")}
+                    >
                       <SelectTrigger id="procedureId">
-                        <SelectValue placeholder="Seleccionar Procedimiento" />
+                        <SelectValue>
+                          {selectedProcedureId 
+                            ? procedures.find(p => p.id === selectedProcedureId)?.name
+                            : "Seleccionar Procedimiento"
+                          }
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {procedures.map(p => (
@@ -292,9 +341,15 @@ export default function AppointmentsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="status">Estado Inicial</Label>
-                    <Select name="status" defaultValue="waiting">
+                    <Select 
+                      name="status" 
+                      value={selectedStatus}
+                      onValueChange={(val: string | null) => setSelectedStatus(val ?? "waiting")}
+                    >
                       <SelectTrigger id="status">
-                        <SelectValue placeholder="Estado de la cita" />
+                        <SelectValue>
+                          {selectedStatus === "waiting" ? "En Espera" : "Confirmada"}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="waiting">En Espera</SelectItem>
@@ -361,6 +416,18 @@ export default function AppointmentsPage() {
                     >
                       <div className="h-2 w-2 rounded-full bg-red-500 mr-2" />
                       Cancelar Cita
+                    </Button>
+                  </div>
+                  
+                  <div className="pt-4 border-t mt-2">
+                    <Button 
+                      variant="ghost" 
+                      onClick={handleDeleteAppointment}
+                      disabled={isSubmitting}
+                      className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Eliminar Cita Permanentemente
                     </Button>
                   </div>
                 </div>

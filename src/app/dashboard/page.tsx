@@ -14,6 +14,7 @@ import {
 import { Users, Calendar, Banknote, TrendingUp, Loader2 } from "lucide-react"
 import { createClient } from "@/utils/supabase/client"
 import moment from "moment"
+import { getDoctorTitle } from "@/utils/formatters"
 
 export default function DashboardPage() {
   const supabase = createClient()
@@ -24,13 +25,14 @@ export default function DashboardPage() {
     procedures: 0
   })
   const [recentApps, setRecentApps] = useState<any[]>([])
+  const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true)
       
-      const [patientsCount, appointmentsCount, proceduresCount, budgetsRes, recentAppsRes] = await Promise.all([
+      const [patientsCount, appointmentsCount, proceduresCount, budgetsRes, recentAppsRes, profileRes] = await Promise.all([
         supabase.from('patients').select('*', { count: 'exact', head: true }),
         supabase.from('appointments').select('*', { count: 'exact', head: true }),
         supabase.from('procedures').select('*', { count: 'exact', head: true }),
@@ -39,7 +41,8 @@ export default function DashboardPage() {
           .select('*, patients(first_name, last_name)')
           .gte('start_time', new Date().toISOString())
           .order('start_time', { ascending: true })
-          .limit(5)
+          .limit(5),
+        supabase.from('profiles').select('*').eq('id', (await supabase.auth.getUser()).data.user?.id).single()
       ])
 
       const totalEarnings = (budgetsRes.data || []).reduce((acc, b) => acc + Number(b.total), 0)
@@ -52,6 +55,7 @@ export default function DashboardPage() {
       })
 
       setRecentApps(recentAppsRes.data || [])
+      setProfile(profileRes.data)
       setLoading(false)
     }
 
@@ -75,6 +79,13 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-8 scroll-smooth">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          Hola, {profile ? `${getDoctorTitle(profile.gender)} ${profile.first_name}` : '...'}!
+        </h1>
+        <p className="text-muted-foreground italic tracking-wide">Este es el resumen de tu clínica para hoy.</p>
+      </div>
+
       <div>
         <Card className="shadow-sm border border-border/50">
           <CardHeader>
